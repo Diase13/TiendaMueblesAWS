@@ -1,0 +1,151 @@
+@{
+    ViewData["Title"] = "RF";
+}
+<h1>@ViewData["Title"]</h1>
+<!DOCTYPE html>
+<html>
+  <head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel='stylesheet' />
+    <style>
+        div.gallery {
+            margin: 5px;
+            border: 1px solid #ccc;
+            float: left;
+            width: 250px;
+        }
+        div.gallery:hover {
+            border: 1px solid #777;
+        }
+        div.gallery img {
+            width: 100%;
+            height: auto;
+        }
+        div.desc {
+            padding: 10px;
+            text-align: center;
+            font-size:12px
+        }
+        div.source img {
+            width: 200px;
+            height: auto;
+        }
+        #contenedor {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        }
+
+        #contenedor > div {
+        width: 50%;
+        }
+    </style> 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.85.0.min.js"></script>
+    <script>
+    $(document).ready(function(){
+        AWS.config.region = 'us-east-1';
+        AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+            IdentityPoolId: 'us-east-1:132823ec-6093-4136-aa3f-9d264f712279',
+        });
+        var s3 = new AWS.S3({apiVersion: '2006-03-01'});
+
+        $('#upload').click(function(event) {
+            var files = $('#uploadphoto').prop('files');
+            if (!files.length) {
+               return alert('Por favor, elija un archivo para cargar');
+            }
+            var file = files[0];
+            s3.upload({
+                    Bucket: 'guardarimagenes',
+                    Key: file.name,
+                    Body: file,
+                    ACL: 'public-read'
+                }, function(err, data) {
+                    if (err) {
+                        return alert('Error al subir la foto: ', err.message);
+                    }
+                    alert('Foto cargada con exito.');
+            });
+        });
+        $('#search').click(function(event) {
+            var files = $('#searchphoto').prop('files');
+            if (!files.length) {
+               return alert('¡Elija un archivo para cargar para la búsqueda!');
+            }
+            var file = files[0];
+            s3.upload({
+                    Bucket: 'busquedarostros',
+                    Key: file.name,
+                    Body: file,
+                    ACL: 'public-read'
+                }, function(err, data) {
+                if (err) {
+                    return alert('Error al subir la foto: ', err.message);
+                } else {
+                    //successfully uploaded photo - initiate face search
+                    var url =  'https://pyp0e05v39.execute-api.us-east-1.amazonaws.com/dev?filename=' + file.name;
+                    $.get(url, function(data){
+                        $('#album-list').empty();
+                        $('<p>Resultados de Busqueda</p>').appendTo('#album-list');
+                        $.each(data.IDs, function(key, value) {
+                            var imageurl = 'https://s3.amazonaws.com/guardarimagenes/' + value.ExternalImageId;
+                            var htmlelements = [
+                                '<div class="gallery">',
+                                '<a target="_blank" href="' + imageurl + '"><img src="' + imageurl +'"/></a>',
+                                '</div>'
+                            ]
+                            var img = gethtml(htmlelements);
+                            $(img).appendTo('#album-list');
+                        });
+                    });
+                }
+            });
+        });
+       function gethtml(elements) {
+          return elements.join('\n');
+       }
+       $('#uploadphoto').on("change", function(e){ 
+           $('#indexsource').attr('src',URL.createObjectURL(e.target.files[0]));
+        });
+        $('#searchphoto').on("change", function(e){ 
+           $('#searchsource').attr('src',URL.createObjectURL(e.target.files[0]));
+        }); 
+    });
+  </script>
+  </head>
+  <body>
+    <br>
+    <h4 class="text-center text-dark">Recomendacion: Al subir la imagen en archivo .jpg</h4>
+    <div id="contenedor">
+        <div>
+            <div class="text-center container p-5 "><p style="color:#1CC8C5  ";>Subir Imagen de Rostro</p>
+                <div class="card border-primary mb-3">
+                    <div class="card-body">
+                       <input id="uploadphoto" type="file" accept="image/*">   
+                        <br/><br/>
+                        <div class="source"><img id="indexsource"/></div>
+                        <br>
+                        <button class="btn btn-info" id="upload">Subir Imagen</button>
+                        <br>  
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="text-center container p-5 "><p style="color:#1CC855 ";>Busqueda de Rostro</p>
+                <div class="card border-primary mb-3">
+                    <div class="card-body">
+                        <input id="searchphoto" type="file" accept="image/*">
+                        <br/><br/>
+                        <div class="source"><img id="searchsource"/></div>
+                        <br> 
+                        <button class="btn btn-info" id="search">Buscar</button>
+                    </div>
+                </div>
+            <div> 
+        </div>
+    </div>
+    <br/>       
+    <div class="text-center container p-5" id="album-list" ></div>
+  </body>
+</html>

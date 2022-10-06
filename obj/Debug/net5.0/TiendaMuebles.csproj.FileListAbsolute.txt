@@ -1,0 +1,9 @@
+C:\Users\diego\Downloads\TiendaMuebles-main\obj\Debug\net5.0\TiendaMuebles.csproj.AssemblyReference.cache
+C:\Users\diego\Downloads\TiendaMuebles-main\obj\Debug\net5.0\TiendaMuebles.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\diego\Downloads\TiendaMuebles-main\obj\Debug\net5.0\TiendaMuebles.AssemblyInfoInputs.cache
+C:\Users\diego\Downloads\TiendaMuebles-main\obj\Debug\net5.0\TiendaMuebles.AssemblyInfo.cs
+C:\Users\diego\Downloads\TiendaMuebles-main\obj\Debug\net5.0\TiendaMuebles.csproj.CoreCompileInputs.cache
+C:\Users\diego\Downloads\TiendaMuebles-main\obj\Debug\net5.0\TiendaMuebles.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\diego\Downloads\TiendaMuebles-main\obj\Debug\net5.0\TiendaMuebles.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\diego\Downloads\TiendaMuebles-main\obj\Debug\net5.0\TiendaMuebles.RazorAssemblyInfo.cache
+C:\Users\diego\Downloads\TiendaMuebles-main\obj\Debug\net5.0\TiendaMuebles.RazorAssemblyInfo.cs
